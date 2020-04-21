@@ -21,26 +21,39 @@ class CodelabExtractor:
 			'h6': cls.h,
 			'ol': cls.ol,
 			'ul': cls.ul,
-			'li': cls.li,
+			'li': cls.default_behaviour(ListItem),
 			'aside': cls.aside,
-			'b': cls.bold,
-			'strong': cls.bold,
-			'i': cls.italic,
-			'em': cls.italic,
-			'u': cls.underline,
-			'ins': cls.underline,
-			'strike': cls.strikethrough,
-			'del': cls.strikethrough,
-			'paper-button': cls.element,
+			'b': cls.default_behaviour(Bold),
+			'strong': cls.default_behaviour(Bold),
+			'i': cls.default_behaviour(Italic),
+			'em': cls.default_behaviour(Italic),
+			'u': cls.default_behaviour(Underline),
+			'ins': cls.default_behaviour(Underline),
+			'strike': cls.default_behaviour(Strikethrough),
+			'del': cls.default_behaviour(Strikethrough),
+			'paper-button': cls.default_behaviour(Element),
 			'img': cls.img,
-			'tt': cls.monospace,
-			'code': cls.monospace,
-			'kbd': cls.monospace,
-			'var': cls.monospace,
-			'samp': cls.monospace,
+			'tt': cls.default_behaviour(Monospace),
+			'code': cls.default_behaviour(Monospace),
+			'kbd': cls.default_behaviour(Monospace),
+			'var': cls.default_behaviour(Monospace),
+			'samp': cls.default_behaviour(Monospace),
 			'pre': cls.pre,
 			'br': cls.br,
+			'table': cls.default_behaviour(Table),
+			'tr': cls.default_behaviour(TableRow),
+			'td': cls.default_behaviour(TableCell),
+			'th': cls.default_behaviour(TableCell),
+			'tbody': cls.default_behaviour(Element),
+			'thead': cls.default_behaviour(Element),
+			'tfoot': cls.default_behaviour(Element),
 		}
+
+	@classmethod
+	def default_behaviour(cls, element_class):
+		def func(self: cls, obj: Html) -> element_class:
+			return self.propagate(obj, element_class())
+		return func
 
 	@classmethod
 	def get_all_codelabs(cls, url_first_codelab: str):
@@ -135,9 +148,6 @@ class CodelabExtractor:
 		return parent
 
 
-	def element(self, obj: Html) -> Element:
-		return self.propagate(obj, Element())
-
 	def step(self, obj: Html, index: int) -> Element:
 		return self.propagate(obj, Step(obj['label'], index))
 
@@ -163,32 +173,14 @@ class CodelabExtractor:
 	def ul(self, obj: Html) -> List:
 		return self.propagate(obj, List(None))
 
-	def li(self, obj: Html) -> ListItem:
-		return self.propagate(obj, ListItem())
-
 	def aside(self, obj: Html) -> Aside:
 		return self.propagate(obj, Aside(obj['class']))
-
-	def bold(self, obj: Html) -> Bold:
-		return self.propagate(obj, Bold())
-
-	def italic(self, obj: Html) -> Italic:
-		return self.propagate(obj, Italic())
-
-	def underline(self, obj: Html) -> Underline:
-		return self.propagate(obj, Underline())
-
-	def strikethrough(self, obj: Html) -> Strikethrough:
-		return self.propagate(obj, Strikethrough())
 
 	def img(self, obj: Html) -> Image:
 		return Image(
 			self.base_url + obj["src"],
 			firstMatchRegex(optionalGet(obj, "style"), r"width\: ((?:[0-9]*\.)?[0-9]+)px"),
 			optionalGet(obj, "alt"))
-
-	def monospace(self, obj: Html) -> Monospace:
-		return self.propagate(obj, Monospace())
 
 	def pre(self, obj: Html) -> Code:
 		return Code(obj)

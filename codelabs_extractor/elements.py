@@ -167,3 +167,21 @@ class Code(Element):
 		code = self.html.text
 		language = detectLanguage(code)
 		return f"```{language}\n{code}\n```\n"
+
+class Table(Element):
+	def __repr__(self):
+		return f"{{Table, {super().__repr__()}}}"
+	def markdown(self):
+		return f"<table>{super().markdown()}</table>"
+
+class TableRow(Element):
+	def __repr__(self):
+		return f"{{TableRow, {super().__repr__()}}}"
+	def markdown(self):
+		return f"<tr>{super().markdown()}</tr>"
+
+class TableCell(Element):
+	def __repr__(self):
+		return f"{{TableCell, {super().__repr__()}}}"
+	def markdown(self):
+		return f"<td>{super().markdown()}</td>"
