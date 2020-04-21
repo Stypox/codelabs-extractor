@@ -170,7 +170,9 @@ class Aside(Element):
 	def __repr__(self):
 		return f"{{Aside, {self.attribute}, {super().__repr__()}}}"
 	def markdown(self):
-		return "> " + super().markdown().replace('\n', '\n> ') + "\n\n"
+		content = super().markdown().replace("\n", "\n> ")
+		re.sub(r"^[\s\>]+", "\n> ", content)
+		return content + "\n\n"
 
 class Bold(Element):
 	def __repr__(self):
