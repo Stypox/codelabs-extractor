@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup as Html
 from bs4.element import NavigableString
-from .utils import *
+from .utils import getPageHtml, firstMatchRegex, optionalGet
 from .elements import *
 import re
 import os
