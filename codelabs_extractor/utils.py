@@ -58,3 +58,9 @@ def detectLanguage(code: str, default_code_language: str):
 			return "kotlin"
 
 	return default_code_language
+
+def commonStartingSubstring(str1: str, str2: str):
+	for i in range(min(len(str1), len(str2))):
+		if str1[i] != str2[i]:
+			return str1[:i]
+	return str2 if len(str1) > len(str2) else str1

@@ -55,17 +55,6 @@ class CodelabExtractor:
 			return self.propagate(obj, element_class())
 		return func
 
-	@classmethod
-	def get_all_codelabs(cls, url_first_codelab: str, default_code_language: str):
-		last_url = url_first_codelab
-		codelabs = []
-		while last_url is not None:
-			print("Extracting", last_url)
-			codelab = cls(last_url, default_code_language)
-			codelabs.append(codelab)
-			last_url = codelab.next_url
-		return codelabs
-
 
 	def __init__(self, url: str, default_code_language: str):
 		self.default_code_language = default_code_language
@@ -78,11 +67,13 @@ class CodelabExtractor:
 
 
 	def __repr__(self):
-		return (f"Codelab \"{self.title}\":\n" +
+		return (f"Codelab {self.id} \"{self.title}\" chapter {self.chapter}:\n" +
 			"\n".join([repr(step) for step in self.steps]))
 
 	def markdown_pages(self):
 		titlePage = f"# {self.title}\n"
+		if self.chapter is not None:
+			titlePage += f"\nChapter {self.chapter}\n"
 		if self.next_url is not None:
 			titlePage += f"\nNext: [{self.next_title}]({self.next_url})\n"
 		if self.other_url is not None:
@@ -95,10 +86,10 @@ class CodelabExtractor:
 
 	def extract_base_url(self, codelab: Html, url: str):
 		self.base_url = url[0:url.rfind("/")+1]
-		codelab_id = codelab["id"]
+		self.id = codelab["id"]
 
-		if codelab_id not in self.base_url:
-			self.base_url += codelab_id + "/"
+		if self.id not in self.base_url:
+			self.base_url += self.id + "/"
 
 	def extract_steps(self, codelab: Html):
 		stepsHtml = codelab.find_all('google-codelab-step')
@@ -108,6 +99,7 @@ class CodelabExtractor:
 
 	def extract_metadata(self, codelab: Html):
 		self.title = codelab['title']
+		self.chapter = firstMatchRegex(self.title, r"0*([1-9]+\.[0-9]+)")
 
 		lastStep = codelab.find_all('google-codelab-step')[-1]
 		try:
