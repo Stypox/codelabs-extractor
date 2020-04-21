@@ -1,0 +1,6 @@
+*.md
+*.Rmd
+*.pdf
+*.html
+.vscode/
+__pycache__/
