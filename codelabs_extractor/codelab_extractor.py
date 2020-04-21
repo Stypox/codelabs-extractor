@@ -56,18 +56,19 @@ class CodelabExtractor:
 		return func
 
 	@classmethod
-	def get_all_codelabs(cls, url_first_codelab: str):
+	def get_all_codelabs(cls, url_first_codelab: str, default_code_language: str):
 		last_url = url_first_codelab
 		codelabs = []
 		while last_url is not None:
 			print("Extracting", last_url)
-			codelab = cls(last_url)
+			codelab = cls(last_url, default_code_language)
 			codelabs.append(codelab)
 			last_url = codelab.next_url
 		return codelabs
 
 
-	def __init__(self, url: str):
+	def __init__(self, url: str, default_code_language: str):
+		self.default_code_language = default_code_language
 		html = getPageHtml(url)
 		codelab = html.body.find('google-codelab')
 		self.extract_base_url(codelab, url)
@@ -183,7 +184,7 @@ class CodelabExtractor:
 			optionalGet(obj, "alt"))
 
 	def pre(self, obj: Html) -> Code:
-		return Code(obj)
+		return Code(obj, self.default_code_language)
 
 	def br(self, obj: Html) -> Text:
 		return Text("\n")

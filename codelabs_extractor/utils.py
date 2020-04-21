@@ -2,18 +2,18 @@ from bs4 import BeautifulSoup as Html
 from urllib.request import urlopen
 import re
 
-def getFileHtml(filename):
+def getFileHtml(filename: str):
 	with open(filename, "rb") as f:
 		return Html(f.read(), features='html.parser')
 
-def getPageHtml(url):
+def getPageHtml(url: str):
 	# TODO remove this
 	if "kotlin-android-training-welcome" in url:
-		return getHtmlFile("kotlin0.html")
+		return getFileHtml("kotlin0.html")
 	elif "kotlin-android-training-install-studio" in url:
-		return getHtmlFile("kotlin1.html")
+		return getFileHtml("kotlin1.html")
 	elif "kotlin-android-training-get-started" in url:
-		return getHtmlFile("kotlin2.html")
+		return getFileHtml("kotlin2.html")
 
 	html = urlopen(url).read()
 	return Html(html, features='html.parser')
@@ -24,7 +24,7 @@ def optionalGet(dictionary_like, key):
 	except KeyError:
 		return None
 
-def firstMatchRegex(string, regex):
+def firstMatchRegex(string: str, regex: str):
 	if string is None or regex is None:
 		return None
 
@@ -35,7 +35,7 @@ def firstMatchRegex(string, regex):
 	else:
 		return match.group(1)
 
-def detectLanguage(code):
+def detectLanguage(code: str, default_code_language: str):
 	def count_occourences(strings: list):
 		sum = 0
 		for string in strings:
@@ -57,6 +57,4 @@ def detectLanguage(code):
 		if kotlinCount >= 3:
 			return "kotlin"
 
-	return detectLanguage.default_language
-
-detectLanguage.default_language = ""
+	return default_code_language

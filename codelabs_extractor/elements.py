@@ -158,14 +158,15 @@ class Monospace(Element):
 		return f"`{super().markdown()}`"
 
 class Code(Element):
-	def __init__(self, html: Html):
+	def __init__(self, html: Html, default_code_language: str):
 		self.html = html
+		self.default_code_language = default_code_language
 
 	def __repr__(self):
 		return f"{{Code, \"{self.html.text}\"}}"
 	def markdown(self):
 		code = self.html.text
-		language = detectLanguage(code)
+		language = detectLanguage(code, self.default_code_language)
 		return f"```{language}\n{code}\n```\n"
 
 class Table(Element):
