@@ -149,7 +149,7 @@ class Image(Element):
 			res += f" width=\"{self.width}px\""
 		if self.description is not None:
 			res += f" alt=\"{self.description}\""
-		return res + f"></p>"
+		return res + f"></p>\n"
 
 class Monospace(Element):
 	def __repr__(self):
@@ -173,16 +173,16 @@ class Table(Element):
 	def __repr__(self):
 		return f"{{Table, {super().__repr__()}}}"
 	def markdown(self):
-		return f"<table>{super().markdown()}</table>"
+		return f"<table>{super().markdown()}</table>\n"
 
 class TableRow(Element):
 	def __repr__(self):
 		return f"{{TableRow, {super().__repr__()}}}"
 	def markdown(self):
-		return f"<tr>{super().markdown()}</tr>"
+		return f"<tr>{super().markdown()}</tr>\n"
 
 class TableCell(Element):
 	def __repr__(self):
 		return f"{{TableCell, {super().__repr__()}}}"
 	def markdown(self):
-		return f"<td>{super().markdown()}</td>"
+		return f"<td>{super().markdown()}</td>\n"
