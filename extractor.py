@@ -39,23 +39,30 @@ def firstMatchRegex(string, regex):
 		return match.group(1)
 
 def detectLanguage(code):
-	xmlCount = code.count("<") + code.count(">")
-	javaKotlinCount = code.count("(") + code.count(")") + code.count("{") + code.count("}")
-	javaCount = code.count(";") + code.count("@")
-	kotlinCount = code.count("?") + code.count("!")
+	def count_occourences(strings: list):
+		sum = 0
+		for string in strings:
+			sum += code.count(string)
+		return sum
 
-	if xmlCount > javaKotlinCount + javaCount + kotlinCount:
-		if xmlCount < 4:
-			return ""
-		return "xml"
+	xmlCount = count_occourences(["<", ">", "/", "\""])
+	javaKotlinCount = count_occourences(["(", ")", "{", "}", "."])
+	javaCount = count_occourences([";", "@"])
+	kotlinCount = count_occourences(["?", "!", ":"])
+
+	if xmlCount > javaKotlinCount:
+		if xmlCount >= 4:
+			return "xml"
 	elif javaCount > kotlinCount:
-		if javaCount < 3:
-			return ""
-		return "java"
+		if javaCount >= 3:
+			return "java"
 	else:
-		if kotlinCount < 3:
-			return ""
-		return "kotlin"
+		if kotlinCount >= 3:
+			return "kotlin"
+
+	return detectLanguage.default_language
+
+detectLanguage.default_language = ""
 
 
 class Element:
@@ -422,6 +429,7 @@ def savePageToFile(filename, url):
 
 if __name__ == "__main__":
 	url = input("Url of first codelab: ")
+	default_code_language = input("Default programming language covered in the codelab (java/kotlin): ")
 	output_directory = input("Output directory: ")
 	language = input("Language of output (md/repr): ")
 
@@ -429,6 +437,7 @@ if __name__ == "__main__":
 	def open_file(filename: str):
 		return open(os.path.join(output_directory, filename), "w")
 
+	detectLanguage.default_language = default_code_language
 	codelabs = CodelabExtractor.get_all_codelabs(url)
 
 	if   language == "repr":
