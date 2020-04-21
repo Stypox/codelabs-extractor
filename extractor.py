@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as Html
 from bs4.element import NavigableString
 from urllib.request import urlopen
 import re
+import os
 
 
 def getHtmlFile(filename):
@@ -9,6 +10,7 @@ def getHtmlFile(filename):
 		return Html(f.read(), features='html.parser')
 
 def getPageHtml(url):
+	# TODO remove this
 	if "kotlin-android-training-welcome" in url:
 		return getHtmlFile("kotlin0.html")
 	elif "kotlin-android-training-install-studio" in url:
@@ -257,6 +259,18 @@ class CodelabExtractor:
 			'br': cls.br,
 		}
 
+	@classmethod
+	def get_all_codelabs(cls, url_first_codelab: str):
+		last_url = url_first_codelab
+		codelabs = []
+		while last_url is not None:
+			print("Extracting", last_url)
+			codelab = cls(last_url)
+			codelabs.append(codelab)
+			last_url = codelab.next_url
+		return codelabs
+
+
 	def __init__(self, url: str):
 		html = getPageHtml(url)
 		codelab = html.body.find('google-codelab')
@@ -407,11 +421,21 @@ def savePageToFile(filename, url):
 		f.write(urlopen(url).read())
 
 if __name__ == "__main__":
-	section = CodelabExtractor("https://codelabs.developers.google.com/codelabs/kotlin-android-training-get-started/#3")
+	url = input("Url of first codelab: ")
+	output_directory = input("Output directory: ")
+	language = input("Language of output (md/repr): ")
 
-	# for i in range(len(section.steps)):
-	# 	with open(f"step{i+1}.md", "w") as f:
-	# 		f.write(section.steps[i].markdown())
+	os.makedirs(output_directory, exist_ok=True)
+	def open_file(filename: str):
+		return open(os.path.join(output_directory, filename), "w")
 
-	with open("allsteps.md", "w") as f:
-		f.write("\n<div style=\"page-break-after: always; visibility: hidden\">\n\\pagebreak\n</div>\n\n".join(section.markdown_pages()))
+	codelabs = CodelabExtractor.get_all_codelabs(url)
+
+	if   language == "repr":
+		for i in range(len(codelabs)):
+			with open_file(f"{i}.txt") as f:
+				f.write(repr(codelabs[i]))
+	elif language == "md":
+		for i in range(len(codelabs)):
+			with open_file(f"{i}.md") as f:
+				f.write("\n<div style=\"page-break-after: always; visibility: hidden\">\n\\pagebreak\n</div>\n\n".join(codelabs[i].markdown_pages()))
