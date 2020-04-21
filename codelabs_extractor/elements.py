@@ -155,7 +155,7 @@ class Monospace(Element):
 	def __repr__(self):
 		return f"{{Monospace, {super().__repr__()}}}"
 	def markdown(self):
-		return f"`{super().markdown()}`"
+		return f"<code>{super().markdown()}</code>"
 
 class Code(Element):
 	def __init__(self, html: Html, default_code_language: str):
