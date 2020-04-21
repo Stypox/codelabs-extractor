@@ -36,6 +36,25 @@ def firstMatchRegex(string, regex):
 	else:
 		return match.group(1)
 
+def detectLanguage(code):
+	xmlCount = code.count("<") + code.count(">")
+	javaKotlinCount = code.count("(") + code.count(")") + code.count("{") + code.count("}")
+	javaCount = code.count(";") + code.count("@")
+	kotlinCount = code.count("?") + code.count("!")
+
+	if xmlCount > javaKotlinCount + javaCount + kotlinCount:
+		if xmlCount < 4:
+			return ""
+		return "xml"
+	elif javaCount > kotlinCount:
+		if javaCount < 3:
+			return ""
+		return "java"
+	else:
+		if kotlinCount < 3:
+			return ""
+		return "kotlin"
+
 
 class Element:
 	def __init__(self):
@@ -197,7 +216,9 @@ class Code(Element):
 	def __repr__(self):
 		return f"{{Code, \"{self.html.text}\"}}"
 	def markdown(self):
-		return f"```\n{self.html.text}\n```\n"
+		code = self.html.text
+		language = detectLanguage(code)
+		return f"```{language}\n{code}\n```\n"
 
 
 class CodelabExtractor:
