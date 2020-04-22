@@ -17,13 +17,12 @@ class CourseExtractor:
 			"\n".join([repr(c) for c in self.codelabs]))
 
 	def pandoc(self, directory: str):
+		written_files = []
 		os.makedirs(directory, exist_ok=True)
 		def open_in_directory(filename: str):
-			return open(os.path.join(directory, filename), "w")
-
-		for i in range(len(self.codelabs)):
-			with open_in_directory(f"{i}.md") as f:
-				f.write(self.codelabs[i].pandoc())
+			filepath = os.path.join(directory, filename)
+			written_files.append(filepath)
+			return open(filepath, "w")
 
 		with open_in_directory("title.txt") as f:
 			f.write("---\n")
@@ -38,6 +37,14 @@ class CourseExtractor:
 			f.write(f"- role: author\n  text: {self.host}\n")
 			f.write(f"- role: trc\n  text: Codelabs Extractor by Stypox\n")
 			f.write("...\n")
+
+		for i in range(len(self.codelabs)):
+			with open_in_directory(f"{i}.md") as f:
+				f.write(self.codelabs[i].pandoc())
+
+		print("Convert to an ebook using this pandoc command:"
+			+ " pandoc --verbose -o OUTPUT_FILE "
+			+ " ".join(written_files))
 
 
 	def download_all_codelabs(self):

@@ -122,7 +122,7 @@ class Reference(Element):
 			content = link[2:]
 		return f"<a href=\"{link}\">{content}</a>"
 	def pandoc(self):
-		link = f"./ch{self.codelab_index+1:>03}.xhtml"
+		link = f"./ch{self.codelab_index+1:>03}.xhtml" # TODO hardcoded xhtml relative path
 		content = super().markdown()
 		if content.strip() == "":
 			content = link[2:]
