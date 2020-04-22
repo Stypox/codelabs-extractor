@@ -34,10 +34,16 @@ class Step(Element):
 		return f"# {self.index}. {self.label}\n{super().markdown()}"
 
 class Paragraph(Element):
+	def __init__(self, align):
+		super().__init__()
+		self.align = align
+
 	def __repr__(self):
-		return f"{{Paragraph, {super().__repr__()}}}"
+		return f"{{Paragraph, self.align, {super().__repr__()}}}"
 	def markdown(self):
-		return f"\n{super().markdown()}\n"
+		if self.align is None:
+			return f"\n{super().markdown()}\n"
+		return f"<p align=\"{self.align}\">{super().markdown()}</p>\n"
 
 class Header(Element):
 	def __init__(self, size: int):
@@ -144,12 +150,12 @@ class Image(Element):
 	def __repr__(self):
 		return f"{{Image, {self.url}, width={self.width}, \"{self.description}\"}}"
 	def markdown(self):
-		res = f"<p align=\"center\"><img src=\"{self.url}\""
+		res = f"<img src=\"{self.url}\""
 		if self.width is not None:
 			res += f" width=\"{self.width}px\""
 		if self.description is not None:
 			res += f" alt=\"{self.description}\""
-		return res + f"></p>\n"
+		return res + f">"
 
 class Monospace(Element):
 	def __repr__(self):

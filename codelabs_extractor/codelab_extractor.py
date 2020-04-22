@@ -147,9 +147,9 @@ class CodelabExtractor:
 	def p(self, obj: Html) -> Paragraph:
 		classAttr = optionalGet(obj, "class")
 		if classAttr is not None and "image-container" in classAttr:
-			return self.img(obj.find("img"))
+			return self.propagate(obj, Paragraph("center"))
 
-		return self.propagate(obj, Paragraph())
+		return self.propagate(obj, Paragraph(None))
 
 	def h(self, obj: Html) -> Header:
 		return self.propagate(obj, Header(int(obj.name[1])))
