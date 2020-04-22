@@ -12,6 +12,8 @@ class Element:
 		return f"[{', '.join([c.__repr__() for c in self.children])}]"
 	def markdown(self):
 		return "".join([c.markdown() for c in self.children])
+	def html(self):
+		return "".join([c.html() for c in self.children])
 
 class Text(Element):
 	def __init__(self, text: str):
@@ -20,6 +22,8 @@ class Text(Element):
 	def __repr__(self):
 		return f"{{Text, \"{self.text}\"}}"
 	def markdown(self):
+		return self.text
+	def html(self):
 		return self.text
 
 class Step(Element):
@@ -32,6 +36,8 @@ class Step(Element):
 		return f"{{Step {self.index}, \"{self.label}\", {super().__repr__()}}}"
 	def markdown(self):
 		return f"# {self.index}. {self.label}\n{super().markdown()}"
+	def html(self):
+		return f"<h1>{self.index}. {self.label}</h1>{super().html()}"
 
 class Paragraph(Element):
 	def __init__(self, align):
@@ -44,6 +50,9 @@ class Paragraph(Element):
 		if self.align is None:
 			return f"\n{super().markdown()}\n"
 		return f"<p align=\"{self.align}\">{super().markdown()}</p>\n"
+	def html(self):
+		if self.align is None:
+			return f"<p>{super().html()}</p>"
 
 class Header(Element):
 	def __init__(self, size: int):
@@ -54,6 +63,8 @@ class Header(Element):
 		return f"{{Header, size={self.size}, {super().__repr__()}}}"
 	def markdown(self):
 		return f"{'#'*self.size} {super().markdown()}\n"
+	def html(self):
+		return f"<h{self.size}>{super().html()}</h{self.size}>"
 
 class Link(Element):
 	def __init__(self, link: str):
@@ -67,6 +78,11 @@ class Link(Element):
 		if content.strip() == "":
 			content = self.link
 		return f"[{content}]({self.link})"
+	def html(self):
+		content = super().html()
+		if content.strip() == "":
+			content = self.link
+		return f"<a href=\"{self.link}\">{content}</a>"
 
 class ListItem(Element):
 	def __init__(self):
@@ -82,6 +98,8 @@ class ListItem(Element):
 		else:
 			content = super().markdown().replace("\n", "<br>")
 			return f"{self.index}. {content}\n"
+	def html(self):
+		return f"<li>{super().html()}</li>"
 
 class List(Element):
 	def __init__(self, ordered_index: int):
@@ -104,6 +122,11 @@ class List(Element):
 		return f"{{List, ordered_index={self.ordered_index}, {super().__repr__()}}}"
 	def markdown(self):
 		return f"{super().markdown()}\n"
+	def html(self):
+		if self.ordered_index is None:
+			return f"<ul>{super().markdown()}</ul>"
+		else:
+			return f"<ol start=\"{self.ordered_index}\">{super().html()}</ol>"
 
 class Aside(Element):
 	def __init__(self, attribute: str):
@@ -116,30 +139,40 @@ class Aside(Element):
 		content = super().markdown().replace("\n", "\n> ")
 		re.sub(r"^[\s\>]+", "\n> ", content)
 		return content + "\n\n"
+	def html(self):
+		return f"<aside>{super().html()}</aside>"
 
 class Bold(Element):
 	def __repr__(self):
 		return f"{{Bold, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<strong>{super().markdown()}</strong>"
+	def html(self):
+		return f"<strong>{super().html()}</strong>"
 
 class Italic(Element):
 	def __repr__(self):
 		return f"{{Italic, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<em>{super().markdown()}</em>"
+	def html(self):
+		return f"<em>{super().html()}</em>"
 
 class Underline(Element):
 	def __repr__(self):
 		return f"{{Underline, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<ins>{super().markdown()}</ins>"
+	def html(self):
+		return f"<ins>{super().html()}</ins>"
 
 class Strikethrough(Element):
 	def __repr__(self):
 		return f"{{Strikethrough, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<del>{super().markdown()}</del>"
+	def html(self):
+		return f"<del>{super().html()}</del>"
 
 class Image(Element):
 	def __init__(self, url: str, width: int, description: str):
@@ -156,39 +189,51 @@ class Image(Element):
 		if self.description is not None:
 			res += f" alt=\"{self.description}\""
 		return res + f">"
+	def html(self):
+		return self.markdown()
 
 class Monospace(Element):
 	def __repr__(self):
 		return f"{{Monospace, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<code>{super().markdown()}</code>"
+	def html(self):
+		return f"<code>{super().html()}</code>"
 
 class Code(Element):
-	def __init__(self, html: Html, default_code_language: str):
-		self.html = html
+	def __init__(self, htmlText: Html, default_code_language: str):
+		self.htmlText = htmlText
 		self.default_code_language = default_code_language
 
 	def __repr__(self):
-		return f"{{Code, \"{self.html.text}\"}}"
+		return f"{{Code, \"{self.htmlText.text}\"}}"
 	def markdown(self):
-		code = self.html.text
+		code = self.htmlText.text
 		language = detectLanguage(code, self.default_code_language)
 		return f"```{language}\n{code}\n```\n"
+	def html(self):
+		return repr(self.html)
 
 class Table(Element):
 	def __repr__(self):
 		return f"{{Table, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<table>{super().markdown()}</table>\n"
+	def html(self):
+		return f"<table>{super().html()}</table>\n"
 
 class TableRow(Element):
 	def __repr__(self):
 		return f"{{TableRow, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<tr>{super().markdown()}</tr>\n"
+	def html(self):
+		return f"<tr>{super().html()}</tr>\n"
 
 class TableCell(Element):
 	def __repr__(self):
 		return f"{{TableCell, {super().__repr__()}}}"
 	def markdown(self):
 		return f"<td>{super().markdown()}</td>\n"
+	def html(self):
+		return f"<td>{super().html()}</td>\n"
