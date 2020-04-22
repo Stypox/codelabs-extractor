@@ -113,9 +113,11 @@ class CodelabExtractor:
 			self.other_title = None
 			self.other_url = None
 
-	def extract_steps(self):
+	def extract_steps(self, all_codelab_ids: list):
 		stepsHtml = self.codelabHtml.find_all('google-codelab-step')
 		self.steps = []
+		self.all_codelab_ids = all_codelab_ids
+
 		for i in range(len(stepsHtml)):
 			self.steps.append(self.step(stepsHtml[i], i+1))
 
@@ -154,7 +156,14 @@ class CodelabExtractor:
 		return self.propagate(obj, Header(int(obj.name[1])))
 
 	def a(self, obj: Html) -> Link:
-		return self.propagate(obj, Link(obj['href']))
+		link = obj['href']
+		i = 0
+		for id in self.all_codelab_ids:
+			if id in link:
+				return self.propagate(obj, Reference(i))
+			i += 1
+
+		return self.propagate(obj, Link(link))
 
 	def ol(self, obj: Html) -> List:
 		try:
