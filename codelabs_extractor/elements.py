@@ -39,7 +39,7 @@ class Step(Element):
 	def __repr__(self):
 		return f"{{Step {self.index}, \"{self.label}\", {super().__repr__()}}}"
 	def markdown(self):
-		return f"# {self.index}. {self.label}\n{super().markdown()}"
+		return f"## {self.index}. {self.label}\n{super().markdown()}"
 	def html(self):
 		return f"<h1>{self.index}. {self.label}</h1>{super().html()}"
 	def pandoc(self):
@@ -122,7 +122,7 @@ class Reference(Element):
 			content = link[2:]
 		return f"<a href=\"{link}\">{content}</a>"
 	def pandoc(self):
-		link = f"./ch{self.codelab_index:>03}.xhtml"
+		link = f"./ch{self.codelab_index+1:>03}.xhtml"
 		content = super().markdown()
 		if content.strip() == "":
 			content = link[2:]
@@ -279,6 +279,8 @@ class Code(Element):
 		language = detectLanguage(code, self.default_code_language)
 		return f"```{language}\n{code}\n```\n"
 	def html(self):
+		return repr(self.html)
+	def pandoc(self):
 		return repr(self.html)
 
 class Table(Element):

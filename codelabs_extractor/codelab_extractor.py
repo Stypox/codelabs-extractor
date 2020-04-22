@@ -5,6 +5,7 @@ from .elements import *
 import re
 import os
 
+MARKDOWN_LINE_BREAK = "\n<div style=\"page-break-after: always; visibility: hidden\">\n\\pagebreak\n</div>\n\n"
 
 class CodelabExtractor:
 	@classmethod
@@ -69,18 +70,22 @@ class CodelabExtractor:
 		return (f"Codelab {self.id} \"{self.title}\" chapter {self.chapter}:\n" +
 			"\n".join([repr(step) for step in self.steps]))
 
-	def markdown_pages(self):
+	def markdown_pages(self) -> list:
 		titlePage = f"# {self.title}\n"
 		if self.chapter is not None:
 			titlePage += f"\nChapter {self.chapter}\n"
 		if self.next_url is not None:
-			titlePage += f"\nNext: [{self.next_title}]({self.next_url})\n"
+			titlePage += f"\nNext: [{self.next_title}]({self.next_url})\n" # TODO this is not relative
 		if self.other_url is not None:
 			titlePage += f"\n[{self.other_title}]({self.other_url})\n"
 
 		stepPages = [step.markdown() for step in
 			self.steps[:(None if self.next_url is None else -1)]]
 		return [titlePage] + stepPages
+
+	def pandoc(self) -> str:
+		return (f"# {self.title}\n" # TODO improve
+			+ MARKDOWN_LINE_BREAK.join([step.pandoc() for step in self.steps]))
 
 
 	def extract_base_url(self, url: str):

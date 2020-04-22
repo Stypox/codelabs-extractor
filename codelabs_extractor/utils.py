@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup as Html
 from urllib.request import urlopen
+from urllib.parse import urlparse
 import re
 
 def getFileHtml(filename: str):
@@ -17,6 +18,10 @@ def getPageHtml(url: str):
 
 	html = urlopen(url).read()
 	return Html(html, features='html.parser')
+
+def extractHost(url: str):
+	parsed = urlparse(url)
+	return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed)
 
 def optionalGet(dictionary_like, key):
 	try:
