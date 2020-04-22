@@ -92,13 +92,13 @@ class Reference(Element):
 	def __repr__(self):
 		return f"{{Reference, codelab_index={self.codelab_index}, {super().__repr__()}}}"
 	def markdown(self):
-		link = f"{self.codelab_index}.md"
+		link = f"./{self.codelab_index}.md"
 		content = super().markdown()
 		if content.strip() == "":
 			content = link
 		return f"[{content}]({link})"
 	def html(self):
-		link = f"{self.codelab_index}.html"
+		link = f"./{self.codelab_index}.html"
 		content = super().html()
 		if content.strip() == "":
 			content = link
