@@ -83,9 +83,8 @@ class CodelabExtractor:
 			self.steps[:(None if self.next_url is None else -1)]]
 		return [titlePage] + stepPages
 
-	def pandoc(self) -> str:
-		return (f"# {self.title}\n" # TODO improve
-			+ MARKDOWN_LINE_BREAK.join([step.pandoc() for step in self.steps]))
+	def pandoc(self) -> str: # TODO add things
+		return (f"# {self.title}\n" + "\n".join([step.pandoc() for step in self.steps]))
 
 
 	def extract_base_url(self, url: str):
