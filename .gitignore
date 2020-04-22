@@ -2,6 +2,7 @@
 *.Rmd
 *.pdf
 *.html
+*.epub
 .vscode/
 __pycache__/
 __main__.py
