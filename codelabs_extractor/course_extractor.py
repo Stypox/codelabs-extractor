@@ -15,11 +15,16 @@ class CourseExtractor:
 	def extract_all_codelabs(self, url_first_codelab: str, default_code_language: str):
 		last_url = url_first_codelab
 		self.codelabs = []
+
 		while last_url is not None:
-			print("Extracting", last_url)
+			print("Downloading", last_url)
 			codelab = CodelabExtractor(last_url, default_code_language)
 			self.codelabs.append(codelab)
 			last_url = codelab.next_url
+
+		for codelab in self.codelabs:
+			print("Extracting", codelab.title)
+			codelab.extract_steps()
 
 	def extract_metadata(self):
 		codelabCount = len(self.codelabs)

@@ -59,11 +59,10 @@ class CodelabExtractor:
 	def __init__(self, url: str, default_code_language: str):
 		self.default_code_language = default_code_language
 		html = getPageHtml(url)
-		codelab = html.body.find('google-codelab')
-		self.extract_base_url(codelab, url)
+		self.codelabHtml = html.body.find('google-codelab')
 
-		self.extract_steps(codelab)
-		self.extract_metadata(codelab)
+		self.extract_base_url(url)
+		self.extract_metadata()
 
 
 	def __repr__(self):
@@ -84,24 +83,18 @@ class CodelabExtractor:
 		return [titlePage] + stepPages
 
 
-	def extract_base_url(self, codelab: Html, url: str):
+	def extract_base_url(self, url: str):
 		self.base_url = url[0:url.rfind("/")+1]
-		self.id = codelab["id"]
+		self.id = self.codelabHtml["id"]
 
 		if self.id not in self.base_url:
 			self.base_url += self.id + "/"
 
-	def extract_steps(self, codelab: Html):
-		stepsHtml = codelab.find_all('google-codelab-step')
-		self.steps = []
-		for i in range(len(stepsHtml)):
-			self.steps.append(self.step(stepsHtml[i], i+1))
-
-	def extract_metadata(self, codelab: Html):
-		self.title = codelab['title']
+	def extract_metadata(self):
+		self.title = self.codelabHtml['title']
 		self.chapter = firstMatchRegex(self.title, r"0*([1-9]+\.[0-9]+)")
 
-		lastStep = codelab.find_all('google-codelab-step')[-1]
+		lastStep = self.codelabHtml.find_all('google-codelab-step')[-1]
 		try:
 			pars = lastStep.find_all('p')
 			self.next_url = pars[0].find('a')["href"]
@@ -119,6 +112,12 @@ class CodelabExtractor:
 			self.next_url = None
 			self.other_title = None
 			self.other_url = None
+
+	def extract_steps(self):
+		stepsHtml = self.codelabHtml.find_all('google-codelab-step')
+		self.steps = []
+		for i in range(len(stepsHtml)):
+			self.steps.append(self.step(stepsHtml[i], i+1))
 
 
 	def parse_element(self, obj: Html) -> Element:
