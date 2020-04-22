@@ -182,8 +182,14 @@ class CodelabExtractor:
 		return self.propagate(obj, Aside(obj['class']))
 
 	def img(self, obj: Html) -> Image:
+		src = obj["src"]
+		if src.startswith("http") or src.startswith("www"):
+			url = src
+		else:
+			url = self.base_url + src
+
 		return Image(
-			self.base_url + obj["src"],
+			url,
 			firstMatchRegex(optionalGet(obj, "style"), r"width\: ((?:[0-9]*\.)?[0-9]+)px"),
 			optionalGet(obj, "alt"))
 
