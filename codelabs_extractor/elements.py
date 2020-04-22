@@ -279,9 +279,9 @@ class Code(Element):
 		language = detectLanguage(code, self.default_code_language)
 		return f"```{language}\n{code}\n```\n"
 	def html(self):
-		return repr(self.html)
+		return str(self.htmlText)
 	def pandoc(self):
-		return repr(self.html)
+		return str(self.htmlText)
 
 class Table(Element):
 	def __repr__(self):
