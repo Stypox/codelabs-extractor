@@ -6,4 +6,3 @@
 *.txt
 .vscode/
 __pycache__/
-__main__.py
