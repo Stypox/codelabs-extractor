@@ -4,7 +4,8 @@ This tool extracts data from a Google Codelab course (e.g. [this one](https://co
 
 ## Usage
 
-This tools requires python3.7+. Using `cd` head over to the root directory of this project and type `python3 -m codelabs_extractor` to run it. By appending `--help` to the previous command you will get this help screen:
+This tools requires [Python 3.7+](https://www.python.org/downloads/). To convert the generated markdown files into ebooks [pandoc](https://pandoc.org/installing.html) is also required.
+<br>Using `cd` head over to the root directory of this project and type `python3 -m codelabs_extractor` to run it. By appending `--help` to the previous command you will get this help screen:
 ```man
 usage: __main__.py [-h] -c URL -o DIR -f FMT [-l LANG]
 
