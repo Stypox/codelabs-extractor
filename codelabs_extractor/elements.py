@@ -40,6 +40,8 @@ class Step(Element):
 		return f"{{Step {self.index}, \"{self.label}\", {super().__repr__()}}}"
 	def markdown(self):
 		return f"## {self.index}. {self.label}\n{super().markdown()}"
+	def markdown_without_title(self):
+		return super().markdown()
 	def html(self):
 		return f"<h1>{self.index}. {self.label}</h1>{super().html()}"
 	def pandoc(self):

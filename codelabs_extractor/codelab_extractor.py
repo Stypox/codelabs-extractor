@@ -75,9 +75,7 @@ class CodelabExtractor:
 		if self.chapter is not None:
 			titlePage += f"\nChapter {self.chapter}\n"
 		if self.next_url is not None:
-			titlePage += f"\nNext: [{self.next_title}]({self.next_url})\n" # TODO this is not relative
-		if self.other_url is not None:
-			titlePage += f"\n[{self.other_title}]({self.other_url})\n"
+			titlePage += self.steps[-1].markdown_without_title()
 
 		stepPages = [step.markdown() for step in
 			self.steps[:(None if self.next_url is None else -1)]]
@@ -103,19 +101,9 @@ class CodelabExtractor:
 			pars = lastStep.find_all('p')
 			self.next_url = pars[0].find('a')["href"]
 			self.next_title = pars[0].find('a').find("paper-button").text
-
-			try:
-				self.other_url = pars[1].find('a')["href"]
-				if self.other_url == self.next_url: raise Exception()
-				self.other_title = pars[1].find('a').text
-			except:
-				self.other_title = None
-				self.other_url = None
 		except:
 			self.next_title = None
 			self.next_url = None
-			self.other_title = None
-			self.other_url = None
 
 	def extract_steps(self, all_codelab_ids: list):
 		stepsHtml = self.codelabHtml.find_all('google-codelab-step')
