@@ -4,5 +4,7 @@
 *.html
 *.epub
 *.txt
+*.css
+*.js
 .vscode/
 __pycache__/
