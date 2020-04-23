@@ -35,7 +35,8 @@ class CourseExtractor:
 
 			f.write("creator:\n")
 			f.write(f"- role: author\n  text: {self.host}\n")
-			f.write(f"- role: trc\n  text: Codelabs Extractor by Stypox\n")
+			f.write("- role: trc\n  text: Codelabs Extractor by Stypox\n")
+			f.write("lang: en\n")
 			f.write("...\n")
 
 		for i in range(len(self.codelabs)):
