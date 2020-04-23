@@ -169,7 +169,7 @@ class CodelabExtractor:
 		return self.propagate(obj, List(None))
 
 	def aside(self, obj: Html) -> Aside:
-		return self.propagate(obj, Aside(obj['class']))
+		return self.propagate(obj, Aside(obj['class'][0]))
 
 	def img(self, obj: Html) -> Image:
 		src = obj["src"]

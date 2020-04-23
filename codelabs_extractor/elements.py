@@ -184,6 +184,22 @@ class List(Element):
 		return f"{super().pandoc()}\n"
 
 class Aside(Element):
+	base_style = "padding: 0.5em 1em; margin: 2em 0; border-left: 4px solid; border-radius: 4px; "
+	specific_styles = {
+		"note":    "border-color: #EA8600; background: #FEF7E0; color: #212124;",
+		"notice":  "border-color: #EA8600; background: #FEF7E0; color: #212124;",
+		"warning": "border-color: #EA8600; background: #FEF7E0; color: #212124;",
+		"tip":     "border-color: #137333; background: #E6F4EA; color: #212124;",
+		"special": "border-color: #137333; background: #E6F4EA; color: #212124;",
+		"callout": "border-color: #185ABC; background: #E8F0FE; color: #212124;",
+	}
+
+	def get_style(self):
+		specific_style = Aside.specific_styles.get(self.attribute, "")
+		if specific_style == "":
+			print(f"ERR: unkwnown style attribute for <aside> element: {self.attribute}")
+		return Aside.base_style + specific_style
+
 	def __init__(self, attribute: str):
 		super().__init__()
 		self.attribute = attribute
@@ -195,9 +211,9 @@ class Aside(Element):
 		re.sub(r"^[\s\>]+", "\n> ", content)
 		return content + "\n\n"
 	def html(self):
-		return f"<aside>{super().html()}</aside>"
+		return f"<aside style=\"{self.get_style()}\">{super().html()}</aside>"
 	def pandoc(self):
-		return f"<aside>{super().html()}</aside>\n" # TODO add background color
+		return f"<aside style=\"{self.get_style()}\">{super().pandoc()}</aside>\n"
 
 class Bold(Element):
 	def __repr__(self):
