@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup as Html
 from bs4.element import NavigableString
-from .utils import getPageHtml, firstMatchRegex, optionalGet
+from .utils import getPageHtml, firstMatchRegex, optionalGet, stripNonLetters
 from .elements import *
 import re
 import os
@@ -95,8 +95,17 @@ class CodelabExtractor:
 
 	def extract_metadata(self):
 		self.title = self.codelabHtml['title']
-		self.chapter = firstMatchRegex(self.title, r"0*([1-9]+\.[0-9]+)")
-		self.short_title = firstMatchRegex(self.title, r"\:(.+)$").strip()
+		self.chapter = firstMatchRegex(self.title, r"0*([1-9][0-9]*\.[0-9]+)")
+		if self.chapter is None:
+			print(f"WARN: could not extract chapter from {self.title}")
+			self.chapter = ""
+
+		self.short_title = firstMatchRegex(self.title, r"[\.\:](.+)$")
+		if self.short_title is None:
+			print(f"WARN: could not extract short title from {self.title}")
+			self.short_title = self.title
+		else:
+			self.short_title = stripNonLetters(self.short_title)
 
 		lastStep = self.codelabHtml.find_all('google-codelab-step')[-1]
 		try:

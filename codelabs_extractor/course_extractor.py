@@ -89,5 +89,5 @@ class CourseExtractor:
 
 	def extract_all_codelabs(self):
 		for codelab in self.codelabs:
-			print("Extracting", codelab.title)
+			print("Extracting", codelab.short_title)
 			codelab.extract_steps(self.all_codelab_ids)

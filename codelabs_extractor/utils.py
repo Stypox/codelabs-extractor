@@ -46,8 +46,8 @@ def firstMatchRegex(string: str, regex: str):
 		return match.group(1)
 
 def stripNonLetters(string: str):
-	string = re.sub(r"^[^a-zA-Z:\u00C0-\u00FF]+", r"", string)
-	string = re.sub(r"[^a-zA-Z:\u00C0-\u00FF]+$", r"", string)
+	string = re.sub(r"^[^a-zA-Z\u00C0-\u00FF]+", r"", string)
+	string = re.sub(r"[^a-zA-Z\u00C0-\u00FF]+$", r"", string)
 	return string
 
 def detectLanguage(code: str, default_code_language: str):
