@@ -71,9 +71,9 @@ class CodelabExtractor:
 			"\n".join([repr(step) for step in self.steps]))
 
 	def markdown_pages(self) -> list:
-		titlePage = f"# {self.title}\n"
+		titlePage = f"# {self.chapter} {self.short_title}\n"
 		if self.chapter is not None:
-			titlePage += f"\nChapter {self.chapter}\n"
+			titlePage += f"\nFull title: {self.title}\n"
 		if self.next_url is not None:
 			titlePage += self.steps[-1].markdown_without_title()
 
@@ -81,8 +81,9 @@ class CodelabExtractor:
 			self.steps[:(None if self.next_url is None else -1)]]
 		return [titlePage] + stepPages
 
-	def pandoc(self) -> str: # TODO add things
-		return (f"# {self.title}\n" + "\n".join([step.pandoc() for step in self.steps]))
+	def pandoc(self) -> str:
+		return (f"# {self.chapter} {self.short_title}\n"
+			+ "\n".join([step.pandoc() for step in self.steps]))
 
 
 	def extract_base_url(self, url: str):
@@ -95,6 +96,7 @@ class CodelabExtractor:
 	def extract_metadata(self):
 		self.title = self.codelabHtml['title']
 		self.chapter = firstMatchRegex(self.title, r"0*([1-9]+\.[0-9]+)")
+		self.short_title = firstMatchRegex(self.title, r"\:(.+)$").strip()
 
 		lastStep = self.codelabHtml.find_all('google-codelab-step')[-1]
 		try:
