@@ -57,9 +57,9 @@ class CodelabExtractor:
 		return func
 
 
-	def __init__(self, url: str, default_code_language: str):
+	def __init__(self, url: str, default_code_language: str, cache_pages_directory: str):
 		self.default_code_language = default_code_language
-		html = getPageHtml(url)
+		html = getPageHtml(url, cache_pages_directory)
 		self.codelabHtml = html.body.find('google-codelab')
 
 		self.extract_base_url(url)

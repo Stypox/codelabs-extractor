@@ -9,6 +9,7 @@ def parseArgs(namespace):
 	argParser = argparse.ArgumentParser(fromfile_prefix_chars="@",
 		description="Extracts data from a Google Codelab course and save it into various formats")
 
+	argParser.add_argument_group("Default options")
 	argParser.add_argument("-c", "--course", type=str, required=True, metavar="URL",
 		help="Url to the first Codelab of the course")
 	argParser.add_argument("-o", "--output-directory", type=str, required=True, metavar="DIR",
@@ -21,13 +22,23 @@ def parseArgs(namespace):
 		+ " Supported LANG values: java, kotlin (and the others supported by Markdown)."
 		+ " Defaults to an empty string (i.e. no syntax highlighting).")
 
+	argParser.add_argument_group("Debugging-related options")
+	argParser.add_argument("--count", type=int, required=False, metavar="N",
+		help="Limit the count of extracted codelabs to the first N")
+	argParser.add_argument("--cache-pages", action="store_true",
+		help="Save downloaded pages to html files or load from them if they already exist")
+
 	argParser.parse_args(namespace=namespace)
+
+	if namespace.count is None:
+		namespace.count = 999999 # infinity
 
 def main():
 	class Args: pass
 	parseArgs(Args)
 
-	course = CourseExtractor(Args.course, Args.language)
+	course = CourseExtractor(Args.course, Args.language, Args.count,
+		Args.output_directory if Args.cache_pages else None)
 
 	if Args.format == "pandoc":
 		course.pandoc(Args.output_directory)

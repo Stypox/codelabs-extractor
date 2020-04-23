@@ -4,10 +4,10 @@ import os
 
 class CourseExtractor:
 
-	def __init__(self, url_first_codelab: str, default_code_language: str):
+	def __init__(self, url_first_codelab: str, default_code_language: str, codelab_count: int, cache_pages_directory: str):
 		self.url_first_codelab = url_first_codelab
 		self.default_code_language = default_code_language
-		self.download_all_codelabs()
+		self.download_codelabs(codelab_count, cache_pages_directory)
 		self.extract_metadata()
 		self.extract_all_codelabs()
 
@@ -47,14 +47,14 @@ class CourseExtractor:
 			+ " ".join(written_files))
 
 
-	def download_all_codelabs(self):
+	def download_codelabs(self, count: int, cache_pages_directory: bool):
 		last_url = self.url_first_codelab
 		self.all_codelab_ids = []
 		self.codelabs = []
 
-		while last_url is not None:
+		while last_url is not None and len(self.codelabs) < count:
 			print("Downloading", last_url)
-			codelab = CodelabExtractor(last_url, self.default_code_language)
+			codelab = CodelabExtractor(last_url, self.default_code_language, cache_pages_directory)
 			self.codelabs.append(codelab)
 
 			last_url = codelab.next_url

@@ -2,10 +2,27 @@ from bs4 import BeautifulSoup as Html
 from urllib.request import urlopen
 from urllib.parse import urlparse
 import re
+import os
 
-def getPageHtml(url: str):
-	html = urlopen(url).read()
-	return Html(html, features='html.parser')
+def downloadPage(url: str, cache_pages_directory: str):
+	if cache_pages_directory is None:
+		return urlopen(url).read()
+
+	filename = re.sub(r"[\<\>\:\"\/\\\|\?\*]", r"_", url) + ".html"
+	file_path = os.path.join(cache_pages_directory, filename)
+
+	if os.path.exists(file_path):
+		with open(file_path, "rb") as f:
+			return f.read()
+	else:
+		data = urlopen(url).read()
+		os.makedirs(cache_pages_directory, exist_ok=True)
+		with open(file_path, "wb") as f:
+			f.write(data)
+		return data
+
+def getPageHtml(url: str, cache_pages_directory: str):
+	return Html(downloadPage(url, cache_pages_directory), features='html.parser')
 
 def extractHost(url: str):
 	parsed = urlparse(url)
