@@ -3,19 +3,7 @@ from urllib.request import urlopen
 from urllib.parse import urlparse
 import re
 
-def getFileHtml(filename: str):
-	with open(filename, "rb") as f:
-		return Html(f.read(), features='html.parser')
-
 def getPageHtml(url: str):
-	# TODO remove this
-	if "kotlin-android-training-welcome" in url:
-		return getFileHtml("kotlin0.html")
-	elif "kotlin-android-training-install-studio" in url:
-		return getFileHtml("kotlin1.html")
-	elif "kotlin-android-training-get-started" in url:
-		return getFileHtml("kotlin2.html")
-
 	html = urlopen(url).read()
 	return Html(html, features='html.parser')
 
