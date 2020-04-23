@@ -57,3 +57,9 @@ def commonStartingSubstring(str1: str, str2: str):
 		if str1[i] != str2[i]:
 			return str1[:i]
 	return str2 if len(str1) > len(str2) else str1
+
+# see https://stackoverflow.com/q/1091945
+def escapeXml(string: str):
+	for ch, rep in [("&","&amp;"), ('"',"&quot;"), ("'","&apos;"), ("<","&lt;"), (">","&gt;")]:
+		string = string.replace(ch, rep)
+	return string

@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup as Html
-from .utils import detectLanguage
+from .utils import detectLanguage, escapeXml
 import re
 
 class Element:
@@ -24,11 +24,11 @@ class Text(Element):
 	def __repr__(self):
 		return f"{{Text, \"{self.text}\"}}"
 	def markdown(self):
-		return self.text
+		return escapeXml(self.text)
 	def html(self):
-		return self.text
+		return self.markdown()
 	def pandoc(self):
-		return self.text
+		return self.markdown()
 
 class Step(Element):
 	def __init__(self, label: str, index: int):
