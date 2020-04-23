@@ -1,5 +1,5 @@
 from .codelab_extractor import CodelabExtractor
-from .utils import commonStartingSubstring, extractHost
+from .utils import commonStartingSubstring, extractHost, stripNonLetters
 import os
 
 class CourseExtractor:
@@ -79,13 +79,13 @@ class CourseExtractor:
 				self.id = commonStartingSubstring(self.codelabs[1].id, self.codelabs[2].id)
 				self.title = commonStartingSubstring(self.codelabs[1].title, self.codelabs[2].title)
 
-			self.id = self.id.strip()
-			self.title = self.title.strip()
+			self.id = stripNonLetters(self.id)
+			self.title = stripNonLetters(self.title)
 
 			if self.id == "":
-				self.id = self.codelabs[0].id.strip()
+				self.id = stripNonLetters(self.codelabs[0].id)
 			if self.title == "":
-				self.title = self.codelabs[0].title.strip()
+				self.title = stripNonLetters(self.codelabs[0].title)
 
 	def extract_all_codelabs(self):
 		for codelab in self.codelabs:
