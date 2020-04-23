@@ -283,8 +283,7 @@ class Code(Element):
 	def html(self):
 		return str(self.htmlText)
 	def pandoc(self):
-		return self.markdown() # TODO
-		#return str(self.htmlText)
+		return self.markdown()
 
 class Table(Element):
 	def __repr__(self):
